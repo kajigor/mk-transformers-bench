@@ -1,0 +1,13 @@
+\frametitle{Conclusion}
+  \begin{itemize}
+    \item We developed and implemented Conservative Partial Deduction
+    \begin{itemize}
+      \item Less-branching heuristics
+    \end{itemize}
+    \item Evaluation shows some improvement, but not for every query
+    \item Future work:
+    \begin{itemize}
+      \item Develop models to predict execution time
+      \item Develop specialization which is more predictable, stable and well-behaved
+    \end{itemize}
+  \end{itemize}

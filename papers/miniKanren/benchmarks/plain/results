@@ -1,0 +1,28 @@
+generating 5000 formulas over 2 variables which evaluate to true
+
+Latencies for 10 iterations of "original", "  conspd", "     cpd", "branches":
+original: 168.62 WALL (167.34 usr +  1.21 sys = 168.56 CPU) @  0.06/s (n=10)
+  conspd: 98.12 WALL (97.25 usr +  0.87 sys = 98.12 CPU) @  0.10/s (n=10)
+     cpd: 24.30 WALL (24.20 usr +  0.10 sys = 24.30 CPU) @  0.41/s (n=10)
+branches: 25.44 WALL (25.29 usr +  0.16 sys = 25.44 CPU) @  0.39/s (n=10)
+
+         s/iter original   conspd branches      cpd
+original   16.9       --     -42%     -85%     -86%
+  conspd   9.81      72%       --     -74%     -75%
+branches   2.54     562%     286%       --      -4%
+     cpd   2.43     594%     304%       5%       --
+
+generating 1000 formulas over 2 variables which evaluate to true
+
+Latencies for 10 iterations of "original", "  conspd", "     cpd", "branches":
+original: 10.97 WALL (10.85 usr +  0.12 sys = 10.97 CPU) @  0.91/s (n=10)
+  conspd: 10.67 WALL (10.59 usr +  0.08 sys = 10.67 CPU) @  0.94/s (n=10)
+     cpd: 17.32 WALL (17.15 usr +  0.16 sys = 17.32 CPU) @  0.58/s (n=10)
+branches:  4.88 WALL ( 4.88 usr +  0.00 sys =  4.88 CPU) @  2.05/s (n=10)
+
+         s/iter      cpd original   conspd branches
+     cpd   1.73       --     -37%     -38%     -72%
+original   1.10      58%       --      -3%     -56%
+  conspd   1.07      62%       3%       --     -54%
+branches  0.488     255%     125%     119%       --
+
