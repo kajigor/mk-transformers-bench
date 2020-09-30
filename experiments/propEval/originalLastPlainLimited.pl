@@ -1,7 +1,7 @@
 evalo(St, conj(X, Y), U, s(N)) :- evalo(St, X, V, N), evalo(St, Y, W, N), ando(V, W, U).
 evalo(St, disj(X, Y), U, s(N)) :- evalo(St, X, V, N), evalo(St, Y, W, N), oro(V, W, U).
 evalo(St, neg(X), U, s(N)) :- evalo(St, X, V, N), noto(V, U).
-evalo(St, var(Z), U, o) :- elemo(Z, St, U).
+evalo(St, var(Z), U, N) :- elemo(Z, St, U).
 ando(true, true, true).
 ando(false, true, false).
 ando(true, false, false).
