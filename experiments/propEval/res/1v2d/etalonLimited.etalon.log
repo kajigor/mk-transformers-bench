@@ -1,0 +1,64 @@
+Common: 22
+etalonLimited: 37
+etalon: 37
+
+Commmon formulas:
+
+true, _.11, _.12, Var (O)
+true, _.11, _.12, Conj (Conj (Var (O), Var (O)), Conj (Var (O), Var (O)))
+true, _.11, _.12, Conj (Conj (Var (O), Var (O)), Disj (Var (O), Var (O)))
+true, _.11, _.12, Conj (Conj (Var (O), Var (O)), Var (O))
+true, _.11, _.12, Conj (Disj (Var (O), Var (O)), Conj (Var (O), Var (O)))
+true, _.11, _.12, Disj (Conj (Var (O), Var (O)), Conj (Var (O), Var (O)))
+true, _.11, _.12, Conj (Disj (Var (O), Var (O)), Disj (Var (O), Var (O)))
+true, _.11, _.12, Conj (Disj (Var (O), Var (O)), Var (O))
+true, _.11, _.12, Disj (Conj (Var (O), Var (O)), Disj (Var (O), Var (O)))
+true, _.11, _.12, Conj (Var (O), Conj (Var (O), Var (O)))
+true, _.11, _.12, Disj (Conj (Var (O), Var (O)), Var (O))
+false, _.11, _.12, Neg (Conj (Var (O), Var (O)))
+true, _.11, _.12, Conj (Var (O), Disj (Var (O), Var (O)))
+true, _.11, _.12, Conj (Var (O), Var (O))
+true, _.11, _.12, Disj (Disj (Var (O), Var (O)), Conj (Var (O), Var (O)))
+true, _.11, _.12, Disj (Disj (Var (O), Var (O)), Var (O))
+false, _.11, _.12, Neg (Var (O))
+true, _.11, _.12, Disj (Var (O), Conj (Var (O), Var (O)))
+true, _.11, _.12, Disj (Var (O), Disj (Var (O), Var (O)))
+true, _.11, _.12, Disj (Var (O), Var (O))
+true, _.11, _.12, Neg (Neg (Var (O)))
+true, _.11, _.12, Disj (Var (O), Neg (Var (O)))
+
+Only in etalonLimited
+
+false, _.11, _.12, Conj (Neg (Var (O)), Neg (Var (O)))
+true, _.11, _.12, Disj (Disj (Var (O), Var (O)), Disj (Var (O), Var (O)))
+true, _.11, _.12, Disj (Conj (Var (O), Var (O)), Neg (Var (O)))
+false, _.11, _.12, Neg (Disj (Var (O), Var (O)))
+false, _.11, _.12, Disj (Neg (Var (O)), Neg (Var (O)))
+true, _.11, _.12, Disj (Disj (Var (O), Var (O)), Neg (Var (O)))
+false, _.11, _.12, Disj (Conj (Var (O), Var (O)), Neg (Var (O)))
+false, _.11, _.12, Disj (Neg (Var (O)), Conj (Var (O), Var (O)))
+false, _.11, _.12, Disj (Neg (Var (O)), Var (O))
+false, _.11, _.12, Disj (Var (O), Neg (Var (O)))
+false, _.11, _.12, Disj (Neg (Var (O)), Disj (Var (O), Var (O)))
+true, _.11, _.12, Disj (Neg (Var (O)), Conj (Var (O), Var (O)))
+true, _.11, _.12, Disj (Neg (Var (O)), Disj (Var (O), Var (O)))
+false, _.11, _.12, Disj (Disj (Var (O), Var (O)), Neg (Var (O)))
+true, _.11, _.12, Disj (Neg (Var (O)), Var (O))
+
+Only in etalon
+
+true, _.11, _.12, Conj (Var (O), Conj (Var (O), Conj (Var (O), Var (O))))
+true, _.11, _.12, Conj (Var (O), Conj (Conj (Var (O), Var (O)), Var (O)))
+true, _.11, _.12, Conj (Var (O), Conj (Var (O), Disj (Var (O), Var (O))))
+true, _.11, _.12, Conj (Var (O), Disj (Var (O), Conj (Var (O), Var (O))))
+true, _.11, _.12, Disj (Var (O), Conj (Var (O), Conj (Var (O), Var (O))))
+true, _.11, _.12, Conj (Conj (Var (O), Var (O)), Conj (Var (O), Conj (Var (O), Var (O))))
+true, _.11, _.12, Conj (Var (O), Disj (Conj (Var (O), Var (O)), Var (O)))
+true, _.11, _.12, Disj (Var (O), Conj (Conj (Var (O), Var (O)), Var (O)))
+true, _.11, _.12, Conj (Conj (Var (O), Var (O)), Conj (Conj (Var (O), Var (O)), Var (O)))
+true, _.11, _.12, Conj (Var (O), Conj (Conj (Var (O), Var (O)), Conj (Var (O), Var (O))))
+true, _.11, _.12, Conj (Var (O), Conj (Disj (Var (O), Var (O)), Var (O)))
+true, _.11, _.12, Conj (Var (O), Disj (Var (O), Disj (Var (O), Var (O))))
+true, _.11, _.12, Disj (Var (O), Conj (Var (O), Disj (Var (O), Var (O))))
+false, _.11, _.12, Neg (Conj (Var (O), Conj (Var (O), Var (O))))
+true, _.11, _.12, Disj (Var (O), Disj (Var (O), Conj (Var (O), Var (O))))
