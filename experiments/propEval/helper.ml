@@ -75,8 +75,11 @@ let run_time n text r =
 let take n fn = fun goal -> RStream.take ~n:n @@ (fn goal) (fun fm -> fm)
 
 let sameness xs ys =
-  let common = List.length @@ List.filter (fun x -> List.mem x ys) xs in
-  (common, List.length xs, List.length ys)
+  let diff l1 l2 = List.filter (fun x -> not (List.mem x l2)) l1 in
+  let common = List.filter (fun x -> List.mem x ys) xs in
+  let only_x = diff xs common in
+  let only_y = diff ys common in
+  (common, only_x, only_y, List.length @@ common, List.length xs, List.length ys)
 
 
 let sum_time res =
@@ -110,12 +113,36 @@ let rec cross xs = function
 | [] -> []
 | y :: ys -> List.map (fun x -> (x, y)) xs @ cross xs ys
 
+let rec cross_diag xs =
+  match xs with
+  | [] -> []
+  | x :: xs -> List.map (fun y -> (x, y)) xs @ cross_diag xs
+
+(* let max x y = if x > y then x else y
+
+let rec formula_depth = function
+| Var x -> 1
+| Neg x -> 1 + (formula_depth x)
+| Conj (x, y) -> 1 + (max (formula_depth x) (formula_depth y))
+| Disj (x, y) -> 1 + (max (formula_depth x) (formula_depth y))
+
+let average_depth xs =
+  let depths = List.map (fun (_,_,_,x) -> formula_depth (x#reify reify_f )) xs in
+  let sum = List.fold_left (fun x y -> x + y) 0 depths in
+  float_of_int sum /. float_of_int (List.length depths) *)
+
+let res_to_string (v1,v2,v3,fm) =
+  Printf.sprintf  "%s, %s, %s, %s"
+                  (var_to_string v1)
+                  (var_to_string v2)
+                  (var_to_string v3)
+                  (fm_to_string fm)
 
 let make_statistics oc lst =
   Printf.fprintf oc "Here lies statistics" ;
   List.iter
     ( fun (num, goal_name, xs) ->
-      cross xs xs |>
+      cross_diag xs |>
       List.iter
         ( fun ((name_x, res_x), (name_y, res_y)) ->
             if name_x = name_y
@@ -125,8 +152,16 @@ let make_statistics oc lst =
               let file = Printf.sprintf "res/%s/%s.%s.log" goal_name name_x name_y in
               let oc = open_out file in
               (* Find a better way to compare formulas *)
-              let (c, x, y) = sameness (List.map (fun (_,_,_,x) -> fm_to_string x) res_x) (List.map (fun (_,_,_,x) -> fm_to_string x) res_y) in
-              Printf.fprintf oc "Common: %i\n%s: %i\n%s: %i\n" c name_x x name_y y;
+              let (common, only_x, only_y, c, x, y) =
+                sameness (List.map res_to_string res_x)
+                         (List.map res_to_string res_y) in
+              (* Printf.fprintf oc "Common: %i\n%s: %i\n%s: %i\nAverageDepth_%s: %f\nAverageDepth_%s: %f" c name_x x name_y y name_x (average_depth res_x) name_y (average_depth res_y); *)
+              Printf.fprintf oc "Common: %i\n%s: %i\n%s: %i\n\nCommmon formulas:\n\n" c name_x x name_y y;
+              List.iter (fun x -> Printf.fprintf oc "%s\n" x) common;
+              Printf.fprintf oc "\nOnly in %s\n\n" name_x;
+              List.iter (fun x -> Printf.fprintf oc "%s\n" x) only_x;
+              Printf.fprintf oc "\nOnly in %s\n\n" name_y;
+              List.iter (fun x -> Printf.fprintf oc "%s\n" x) only_y;
               close_out oc
         )
 

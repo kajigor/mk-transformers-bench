@@ -41,7 +41,7 @@ let mapped =
 let _ =
   make_report mapped
 
-(*
+
 
 let runs =
   let iters = 4L in
@@ -55,4 +55,4 @@ let runs =
   ]
 
 let _ =
-  to_csv "res/fixed.csv" runs *)
+  to_csv "res/fixed.csv" runs
