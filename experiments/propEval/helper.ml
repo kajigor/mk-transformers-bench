@@ -92,6 +92,16 @@ let run_formula n textRepr r =
           (Printf.sprintf "%s, Depth: %s" (show(ground_f) fm) (depth fm |> string_of_int))
     )
 
+let run_formula_with_unifs n textRepr r =
+  Printf.printf "-----------------------------\n%s\n" textRepr;
+  List.iter (fun (q, r, fm) ->
+                    Printf.printf "O:\t%s\tS(O):\t%s\tFm:\t%s\n"
+                                  (var_to_string q)
+                                  (var_to_string r)
+                                  (fm_to_string fm)
+            ) @@
+            RStream.take ~n:n @@ r (fun q r fm -> (q, r, fm))
+
 let run_formula_f file =
   List.iter
     ( fun (q, r, t, fm) ->
@@ -193,17 +203,20 @@ let make_statistics oc lst =
               ()
             else
               let file = Printf.sprintf "res500/%s/%s.%s.log" goal_name name_x name_y in
-              let average_x = average_depth res_x in
+              (* let average_x = average_depth res_x in
               let average_y = average_depth res_y in
               let branches_x = average_branch res_x in
-              let branches_y = average_branch res_y in
+              let branches_y = average_branch res_y in *)
               let oc = open_out file in
               (* Find a better way to compare formulas *)
-              let (common, only_x, only_y, c, x, y) =
+              (* let (common, only_x, only_y, c, x, y) =
                 sameness (List.map res_to_string_4th_proj res_x)
-                         (List.map res_to_string_4th_proj res_y) in
-              Printf.fprintf oc "Common: %i\n%s: %i\n%s: %i\nAverage depth in %s: %f\nAverage depth in %s: %f\nAverage branch in %s: %f\nAverage branch in %s: %f\nCommmon formulas:\n\n" c name_x x name_y y name_x average_x name_y average_y name_x branches_x name_y branches_y;
-              (* Printf.fprintf oc "Common: %i\n%s: %i\n%s: %i\nCommmon formulas:\n\n" c name_x x name_y y ; *)
+                         (List.map res_to_string_4th_proj res_y) in *)
+              let (common, only_x, only_y, c, x, y) =
+              sameness  (List.map res_to_string res_x)
+                        (List.map res_to_string res_y) in
+              (* Printf.fprintf oc "Common: %i\n%s: %i\n%s: %i\nAverage depth in %s: %f\nAverage depth in %s: %f\nAverage branch in %s: %f\nAverage branch in %s: %f\nCommmon formulas:\n\n" c name_x x name_y y name_x average_x name_y average_y name_x branches_x name_y branches_y; *)
+              Printf.fprintf oc "Common: %i\n%s: %i\n%s: %i\nCommmon formulas:\n\n" c name_x x name_y y ;
               List.iter (fun x -> Printf.fprintf oc "%s\n" x) common;
               Printf.fprintf oc "\nOnly in %s\n\n" name_x;
               List.iter (fun x -> Printf.fprintf oc "%s\n" x) only_x;
@@ -226,7 +239,8 @@ let make_report lst =
         ( fun (name, results) ->
           let file = Printf.sprintf "res500/%s.%s.out" goal_name name in
           let oc = open_out file in
-          run_formula_f_proj oc results;
+          (* run_formula_f_proj oc results; *)
+          run_formula_f oc results;
           close_out oc
         ) xs
     ) lst
