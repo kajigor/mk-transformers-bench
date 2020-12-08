@@ -14,50 +14,16 @@ let inputs =
   ]
 
 let _ =
-  List.iter
-    (fun (name, eval) ->
-      run_formula_with_unifs 10 name @@
-      run qrs (fun r t fm -> eval (ocanren {[r;t]}) fm two)
-    ) inputs
+  List.iter (fun (name, eval) ->
+    run_formula_raw 500 name @@
+    run_with_unification_counter qrs (fun q r fm -> eval (ocanren {[q;r]}) fm two)
+  ) inputs
+
 
 (*
-let run_formula_with_unifs' n textRepr r =
-  Printf.printf "-----------------------------\n%s\n" textRepr;
-  List.iter (fun (us, (q, r, fm)) ->
-                    Printf.printf "Unifs: %d\tO:\t%s\tS(O):\t%s\tFm:\t%s\n"
-                                  us
-                                  (var_to_string q)
-                                  (var_to_string r)
-                                  (var_to_string fm)
-            ) @@
-            RStream.take ~n:n @@ r (fun q r fm -> (q, r, fm))
 
-let run_formula_with_unifs n textRepr r =
-  Printf.printf "-----------------------------\n%s\n" textRepr;
-  List.iter (fun (q, r, fm) ->
-                    Printf.printf "O:\t%s\tS(O):\t%s\tFm:\t%s\n"
-                                  (var_to_string q)
-                                  (var_to_string r)
-                                  (var_to_string fm)
-            ) @@
-            RStream.take ~n:n @@ r (fun q r fm -> (q, r, fm))
-
-let xoro x y z =
-  ((x === !!false) &&& ((y === !!false) &&& (z === !!false))) |||
-  ((x === !!true)  &&& ((y === !!false) &&& (z === !!true)))
-
-let _ =
-  run_formula_with_unifs 2 "xoro r t fm" @@
-  run qrs (fun r t fm -> xoro r t fm ) *)
-
-
-
-  (*
-let _ =
-  run_formula 50 "Tmp" @@
-  run qrst (fun q r s fm -> OriginalLastPlainLimited.topLevel (ocanren {[q]}) fm two)
-
-(* let goals =
+(*
+let goals =
   List.map
     ( fun (num, vars, name) ->
       ( num
@@ -132,3 +98,42 @@ let runs =
 
 let _ =
   to_csv "res/fixed.csv" runs *)
+
+
+
+let run_formula_with_unifs' n textRepr r =
+  Printf.printf "-----------------------------\n%s\n" textRepr;
+  List.iter (fun (us, (q, r, fm)) ->
+                    Printf.printf "Unifs: %d\tO:\t%s\tS(O):\t%s\tFm:\t%s\n"
+                                  us
+                                  (var_to_string q)
+                                  (var_to_string r)
+                                  (var_to_string fm)
+            ) @@
+            RStream.take ~n:n @@ r (fun q r fm -> (q, r, fm))
+(*
+let run_formula_with_unifs n textRepr r =
+  Printf.printf "-----------------------------\n%s\n" textRepr;
+  List.iter (fun (q, r, fm) ->
+                    Printf.printf "O:\t%s\tS(O):\t%s\tFm:\t%s\n"
+                                  (var_to_string q)
+                                  (var_to_string r)
+                                  (var_to_string fm)
+            ) @@
+            RStream.take ~n:n @@ r (fun q r fm -> (q, r, fm)) *)
+
+let xoro x y z =
+  ((x === y) &&& (z === !!false)) |||
+  ((x === !!true)  &&& ((y === !!false) &&& (z === !!true)))
+
+let _ =
+  run_formula_with_unifs' 2 "xoro r t fm" @@
+  run_with_unification_counter qrs (fun r t fm -> xoro r t fm )
+
+
+(* let _ =
+  List.iter
+    (fun (name, eval) ->
+      run_formula_with_unifs' 10 name @@
+      run_with_unification_counter qrs (fun r t fm -> eval (ocanren {[r;t]}) fm two)
+    ) inputs *)

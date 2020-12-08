@@ -49,9 +49,14 @@ let stream_4_vars_to_list n stream =
   RStream.take ~n:n
   @@ stream (fun s q r t -> (s, q, r, t))
 
+let stream_3_vars_to_list n stream =
+  RStream.take ~n:n
+  @@ stream (fun s q t -> (s, q, t))
+
+
 let iter_formula_3_vars n r f =
   List.iter f
-  @@ stream_4_vars_to_list n r
+  @@ stream_3_vars_to_list n r
 
 
 let rec depth = function
@@ -91,6 +96,56 @@ let run_formula n textRepr r =
           (var_to_string t)
           (Printf.sprintf "%s, Depth: %s" (show(ground_f) fm) (depth fm |> string_of_int))
     )
+
+let rename_vars q r =
+  let q = var_to_string q in
+  let r = var_to_string r in
+  let isVar x = String.get x 0 = '_' in
+  let renameVar x = if isVar x then "_" else x in
+  if isVar q && isVar r
+  then
+    if q = r
+    then ("_", "_")
+    else ("_.0", "_.1")
+  else
+    (renameVar q, renameVar r)
+
+let map_formula_3_vars n r f =
+  List.map f
+  @@ stream_3_vars_to_list n r
+
+let compare_formulas (fm1, q1, r1, uc1) (fm2, q2, r2, uc2) =
+  let fm_compare = Pervasives.compare fm1 fm2 in
+  (-1) *
+    ( if fm_compare = 0
+      then Pervasives.compare (q1, r1, uc1) (q2, r2, uc2)
+      else fm_compare)
+
+let run_formula_raw n textRepr r =
+  Printf.printf "%s\n" textRepr;
+  let file = Printf.sprintf "unifs/%s.csv" (String.trim textRepr) in
+  let oc = open_out file in
+  Printf.fprintf oc "unifs;var0;var1;formula\n";
+  let formulas = map_formula_3_vars n r
+    ( fun (uc, (q, r, fm)) ->
+        let (q,r) = rename_vars q r in
+        (fm_to_string fm, q, r, uc)
+    ) in
+  let sorted = List.sort compare_formulas formulas in
+  List.iter (fun (fm, q, r, uc) -> Printf.fprintf oc "%d;%s;%s;%s\n" uc q r fm) sorted;
+  close_out oc
+
+let run_formula_with_unifs' n textRepr r =
+  Printf.printf "-----------------------------\n%s\n" textRepr;
+  List.iter (fun (us, (q, r, fm)) ->
+                    Printf.printf "Unifs: %d\tO:\t%s\tS(O):\t%s\tFm:\t%s\n"
+                                  us
+                                  (var_to_string q)
+                                  (var_to_string r)
+                                  (fm_to_string fm)
+            ) @@
+            RStream.take ~n:n @@ r (fun q r fm -> (q, r, fm))
+
 
 let run_formula_with_unifs n textRepr r =
   Printf.printf "-----------------------------\n%s\n" textRepr;
