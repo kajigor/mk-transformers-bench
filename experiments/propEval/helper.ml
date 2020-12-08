@@ -97,6 +97,15 @@ let run_formula n textRepr r =
           (Printf.sprintf "%s, Depth: %s" (show(ground_f) fm) (depth fm |> string_of_int))
     )
 
+let rec cross xs = function
+| [] -> []
+| y :: ys -> List.map (fun x -> (x, y)) xs @ cross xs ys
+
+let rec cross_diag xs =
+  match xs with
+  | [] -> []
+  | x :: xs -> List.map (fun y -> (x, y)) xs @ cross_diag xs
+
 let rename_vars q r =
   let q = var_to_string q in
   let r = var_to_string r in
@@ -114,26 +123,86 @@ let map_formula_3_vars n r f =
   List.map f
   @@ stream_3_vars_to_list n r
 
-let compare_formulas (fm1, q1, r1, uc1) (fm2, q2, r2, uc2) =
-  let fm_compare = Pervasives.compare fm1 fm2 in
-  (-1) *
-    ( if fm_compare = 0
-      then Pervasives.compare (q1, r1, uc1) (q2, r2, uc2)
-      else fm_compare)
+let compare_formulas x y =
+  (-1) * Pervasives.compare x y
 
-let run_formula_raw n textRepr r =
+let fm_gt (fm1, q1, r1, _) (fm2, q2, r2, _) =
+  (fm1, q1, r1) > (fm2, q2, r2)
+
+let get_unification_counter (_,_,_,uc) = uc
+
+let merge_results (fm, q, r, uc1) (_,_,_,uc2) =
+  (fm, q, r, uc1, uc2)
+
+let rec common_formulas l1 l2 =
+  match l1 with
+  | [] -> []
+  | h1::t1 -> (
+    match l2 with
+    | [] -> []
+    | h2::t2 when fm_gt h1 h2 -> common_formulas t1 l2
+    | h2::t2 when fm_gt h2 h1 -> common_formulas l1 t2
+    | h2::t2 ->
+      merge_results h1 h2 :: common_formulas t1 t2
+  )
+
+(* let rec common_formulas l1 l2 =
+  match l1 with
+  | [] -> []
+  | h1::t1 -> (
+    match l2 with
+    | [] -> []
+    | h2::t2 when fm_gt h1 h2 -> common_formulas t1 l2
+    | h2::t2 when fm_gt h2 h1 -> common_formulas l1 t2
+    | h2::t2 ->
+      match common_formulas t1 t2 with
+      | [] -> [h1]
+      | h3::t3 as l when h3 = h1 -> l
+      | h3::t3 as l -> h1::l
+  ) *)
+
+let convert_results n r =
+  let formulas = map_formula_3_vars n r
+  ( fun (uc, (q, r, fm)) ->
+      let (q,r) = rename_vars q r in
+      (fm_to_string fm, q, r, uc)
+  ) in
+  let sorted = List.sort compare_formulas formulas in
+  sorted
+
+
+
+
+let run_formula_raw (textRepr, results) =
   Printf.printf "%s\n" textRepr;
   let file = Printf.sprintf "unifs/%s.csv" (String.trim textRepr) in
   let oc = open_out file in
   Printf.fprintf oc "unifs;var0;var1;formula\n";
-  let formulas = map_formula_3_vars n r
-    ( fun (uc, (q, r, fm)) ->
-        let (q,r) = rename_vars q r in
-        (fm_to_string fm, q, r, uc)
-    ) in
-  let sorted = List.sort compare_formulas formulas in
-  List.iter (fun (fm, q, r, uc) -> Printf.fprintf oc "%d;%s;%s;%s\n" uc q r fm) sorted;
+  List.iter (fun (fm, q, r, uc) -> Printf.fprintf oc "%d;%s;%s;%s\n" uc q r fm) results;
   close_out oc
+
+let common_to_csv name1 name2 common =
+  let name1 = String.trim name1 in
+  let name2 = String.trim name2 in
+  let file = Printf.sprintf "unifs/%s.csv" @@ String.concat "_" [name1; name2] in
+  Printf.printf "%s\n" file;
+  let oc = open_out file in
+  Printf.fprintf oc "unifs_%s;unifs_%s;var0;var1;formula\n" name1 name2 ;
+  List.iter (fun (fm, q, r, uc1, uc2) -> Printf.fprintf oc "%d;%d;%s;%s;%s\n" uc1 uc2 q r fm) common;
+  close_out oc
+
+
+
+
+let compare_unification_counters xs =
+  List.iter run_formula_raw xs;
+  let crossed = cross_diag xs in
+  let common = List.map (fun ((name1, res1), (name2, res2)) -> (name1, name2, common_formulas res1 res2)) crossed in
+  List.iter (fun (name1, name2, common) ->
+    common_to_csv name1 name2 common
+  ) common
+
+
 
 let run_formula_with_unifs' n textRepr r =
   Printf.printf "-----------------------------\n%s\n" textRepr;
@@ -221,15 +290,6 @@ let do_tables m n fn lst name =
   let samples = Benchmark.latencyN m (List.map (fun (name, goal) -> (name, take n fn, goal)) lst) in
   Benchmark.tabulate samples;
   (name, samples)
-
-let rec cross xs = function
-| [] -> []
-| y :: ys -> List.map (fun x -> (x, y)) xs @ cross xs ys
-
-let rec cross_diag xs =
-  match xs with
-  | [] -> []
-  | x :: xs -> List.map (fun y -> (x, y)) xs @ cross_diag xs
 
 let res_to_string (v1,v2,v3,fm) =
   Printf.sprintf  "%s, %s, %s, %s"

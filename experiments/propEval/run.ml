@@ -7,6 +7,7 @@ let two = Std.Nat.succ (Std.Nat.succ Std.Nat.zero)
 let inputs =
   [ " originalLimited", OriginalLastPlainLimited.topLevel
   ; "   etalonLimited", EtalonLastPlainLimited.topLevel
+  ; "          consPD", (fun x y z -> ConsPropLastPlain.topLevel y x)
   ; "        original", (fun x y z -> OriginalLastPlain.topLevel x y)
   ; "          etalon", (fun x y z -> EtalonLastPlain.topLevel x y)
   ; "         perfect", (fun x y z -> PerfectLastPlain.topLevel x y)
@@ -14,10 +15,20 @@ let inputs =
   ]
 
 let _ =
+  let converted_results =
+    List.map (fun (name, eval) ->
+      ( name
+      , convert_results 500
+        @@ run_with_unification_counter qrs (fun q r fm -> eval (ocanren {[q;r]}) fm two)
+      )
+    ) inputs in
+  compare_unification_counters converted_results
+
+(* let _ =
   List.iter (fun (name, eval) ->
     run_formula_raw 500 name @@
     run_with_unification_counter qrs (fun q r fm -> eval (ocanren {[q;r]}) fm two)
-  ) inputs
+  ) inputs *)
 
 
 (*
