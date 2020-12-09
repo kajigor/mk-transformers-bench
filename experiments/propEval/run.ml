@@ -11,6 +11,8 @@ let inputs =
   ; "        original", (fun x y z -> OriginalLastPlain.topLevel x y)
   ; "          etalon", (fun x y z -> EtalonLastPlain.topLevel x y)
   ; "         perfect", (fun x y z -> PerfectLastPlain.topLevel x y)
+  ; "           geoff", (fun x y z -> Geoff_originalLastPlain.topLevel x y)
+  ; "            ecce", (fun x y z -> EcceLastPlain.topLevel x y)
   (* ; "     etalonExtra", (fun x y z -> EtalonLastPlainExtra.topLevel x y) *)
   ]
 
