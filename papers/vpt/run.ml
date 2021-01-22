@@ -27,7 +27,7 @@ let inputs =
   ]
 
 let _ =
-  let n = 500 in
+  let n = 1000 in
   let streams =
     List.map (fun (name, eval) ->
       ( String.trim name
@@ -46,7 +46,7 @@ let runs =
       run q (fun fm -> fresh (q r s) (eval (vars q r s) fm two))) inputs name
   ) @@
   [
-    (500, (fun q r s -> ocanren {[q;r]}), "2v2d")
+    (1000, (fun q r s -> ocanren {[q;r]}), "2v2d")
   ]
 
 

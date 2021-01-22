@@ -168,7 +168,7 @@ let rec common_formulas l1 l2 =
 
 let compute_average n xs =
   let results = List.map (fun (name, rs) -> (name, map_formula_3_vars n rs (fun (_,(_,_,fm)) -> project fm))) xs in
-  let file = "unifs500/average.csv" in
+  let file = "unifs/average.csv" in
   let oc = open_out file in
   Printf.fprintf oc "name;average_width;average_depth\n";
   List.iter (fun (name, rs) -> Printf.fprintf oc "%s;%f;%f\n" name (average_branch rs) (average_depth rs)) results;
