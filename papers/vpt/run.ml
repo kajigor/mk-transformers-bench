@@ -27,14 +27,28 @@ let inputs =
   ]
 
 let _ =
-  let converted_results =
+  let n = 500 in
+  let streams =
     List.map (fun (name, eval) ->
-      ( name
-      , convert_results 500
-        @@ run_with_unification_counter qrs (fun q r fm -> eval (ocanren {[q;r]}) fm two)
+      ( String.trim name
+      , run_with_unification_counter qrs (fun q r fm -> eval (ocanren {[q;r]}) fm two)
       )
     ) inputs in
-  compare_unification_counters converted_results
+  let converted_results =
+    List.map (fun (name, stream) -> (name, convert_results n stream)) streams in
+  compare_unification_counters converted_results;
+  compute_average n (List.tl streams)
+
+let runs =
+  let iters = 10L in
+  List.map (fun (num, vars, name) ->
+    do_tables iters num (fun eval ->
+      run q (fun fm -> fresh (q r s) (eval (vars q r s) fm two))) inputs name
+  ) @@
+  [
+    (500, (fun q r s -> ocanren {[q;r]}), "2v2d")
+  ]
+
 
 (* let _ =
   List.iter (fun (name, eval) ->

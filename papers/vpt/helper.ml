@@ -71,17 +71,22 @@ let rec branches = function
 | Conj (x, y) -> 2 + ((branches x) + (branches y))
 | Disj (x, y) -> 2 + ((branches x) + (branches y))
 
+let sum_up xs = List.fold_left (fun x y -> x + y) 0 xs
+
+let average xs =
+  let sum = sum_up xs in
+  float_of_int sum /. float_of_int (List.length xs)
+
 let average_depth xs =
-  let depths = List.map (fun (_,_,_,x) -> depth x) xs in
-  let sum = List.fold_left (fun x y -> x + y) 0 depths in
-  float_of_int sum /. float_of_int (List.length depths)
+  List.map depth xs
+  |> average
 
 let average_branch xs =
-  let branchs = List.map (fun (_,_,_,x) -> branches x) xs in
-  let sum = List.fold_left (fun x y -> x + y) 0 branchs in
-  float_of_int sum /. float_of_int (List.length branchs)
+  List.map branches xs
+  |> average
 
-let run_formula n textRepr r =
+
+(* let run_formula n textRepr r =
   let average = average_depth (RStream.take ~n:n @@ r (fun x y z t -> (x, y, z, project t))) in
   Printf.printf "-----------------------------\nAverage Depth: %s\n%s\n" (string_of_float average) textRepr;
 
@@ -95,7 +100,7 @@ let run_formula n textRepr r =
           (var_to_string r)
           (var_to_string t)
           (Printf.sprintf "%s, Depth: %s" (show(ground_f) fm) (depth fm |> string_of_int))
-    )
+    ) *)
 
 let rec cross xs = function
 | [] -> []
@@ -109,15 +114,15 @@ let rec cross_diag xs =
 let rename_vars q r =
   let q = var_to_string q in
   let r = var_to_string r in
-  let isVar x = String.get x 0 = '_' in
-  let renameVar x = if isVar x then "_" else x in
-  if isVar q && isVar r
+  let is_var x = String.get x 0 = '_' in
+  let rename_var x = if is_var x then "_" else x in
+  if is_var q && is_var r
   then
     if q = r
     then ("_", "_")
     else ("_.0", "_.1")
   else
-    (renameVar q, renameVar r)
+    (rename_var q, rename_var r)
 
 let map_formula_3_vars n r f =
   List.map f
@@ -161,6 +166,14 @@ let rec common_formulas l1 l2 =
       | h3::t3 as l -> h1::l
   ) *)
 
+let compute_average n xs =
+  let results = List.map (fun (name, rs) -> (name, map_formula_3_vars n rs (fun (_,(_,_,fm)) -> project fm))) xs in
+  let file = "unifs500/average.csv" in
+  let oc = open_out file in
+  Printf.fprintf oc "name;average_width;average_depth\n";
+  List.iter (fun (name, rs) -> Printf.fprintf oc "%s;%f;%f\n" name (average_branch rs) (average_depth rs)) results;
+  close_out oc
+
 let convert_results n r =
   let formulas = map_formula_3_vars n r
   ( fun (uc, (q, r, fm)) ->
@@ -170,12 +183,9 @@ let convert_results n r =
   let sorted = List.sort compare_formulas formulas in
   sorted
 
-
-
-
 let run_formula_raw (textRepr, results) =
   Printf.printf "%s\n" textRepr;
-  let file = Printf.sprintf "unifs/%s.csv" (String.trim textRepr) in
+  let file = Printf.sprintf "unifs500/%s.csv" (String.trim textRepr) in
   let oc = open_out file in
   Printf.fprintf oc "unifs;var0;var1;formula\n";
   List.iter (fun (fm, q, r, uc) -> Printf.fprintf oc "%d;%s;%s;%s\n" uc q r fm) results;
@@ -184,7 +194,7 @@ let run_formula_raw (textRepr, results) =
 let common_to_csv name1 name2 common =
   let name1 = String.trim name1 in
   let name2 = String.trim name2 in
-  let file = Printf.sprintf "unifs/%s.csv" @@ String.concat "_" [name1; name2] in
+  let file = Printf.sprintf "unifs500/%s_%s.csv" name1 name2 in
   Printf.printf "%s\n" file;
   let oc = open_out file in
   Printf.fprintf oc "unifs_%s;unifs_%s;var0;var1;formula\n" name1 name2 ;

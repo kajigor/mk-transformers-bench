@@ -1,0 +1,30 @@
+   perfect:  6.98 WALL ( 6.91 usr +  0.07 sys =  6.98 CPU) @  1.43/s (n=10)
+    etalon: 58.18 WALL (57.57 usr +  0.60 sys = 58.18 CPU) @  0.17/s (n=10)
+  consPDLP:  5.35 WALL ( 5.30 usr +  0.05 sys =  5.35 CPU) @  1.87/s (n=10)
+originalLP:  5.85 WALL ( 5.80 usr +  0.05 sys =  5.85 CPU) @  1.71/s (n=10)
+    ecceLP:  9.09 WALL ( 9.01 usr +  0.08 sys =  9.09 CPU) @  1.10/s (n=10)
+  consPDFP:  5.34 WALL ( 5.30 usr +  0.04 sys =  5.34 CPU) @  1.87/s (n=10)
+originalFP:  9.90 WALL ( 9.82 usr +  0.08 sys =  9.90 CPU) @  1.01/s (n=10)
+    ecceFP:  9.67 WALL ( 9.54 usr +  0.13 sys =  9.67 CPU) @  1.03/s (n=10)
+  consPDLN:  5.71 WALL ( 5.61 usr +  0.10 sys =  5.71 CPU) @  1.75/s (n=10)
+originalLN:  6.55 WALL ( 6.46 usr +  0.09 sys =  6.55 CPU) @  1.53/s (n=10)
+    ecceLN: 10.46 WALL (10.38 usr +  0.08 sys = 10.46 CPU) @  0.96/s (n=10)
+  consPDFN:  5.65 WALL ( 5.54 usr +  0.11 sys =  5.65 CPU) @  1.77/s (n=10)
+originalFN:  8.14 WALL ( 8.11 usr +  0.03 sys =  8.14 CPU) @  1.23/s (n=10)
+    ecceFN: 13.22 WALL (13.11 usr +  0.12 sys = 13.22 CPU) @  0.76/s (n=10)
+              Rate     etalon     ecceFN     ecceLN originalFP     ecceFP     ecceLP originalFN    perfect originalLN originalLP   consPDLN   consPDFN   consPDLP   consPDFP
+    etalon 0.172/s         --       -77%       -82%       -83%       -83%       -84%       -86%       -88%       -89%       -90%       -90%       -90%       -91%       -91%
+    ecceFN 0.756/s       340%         --       -21%       -25%       -27%       -31%       -38%       -47%       -50%       -56%       -57%       -57%       -60%       -60%
+    ecceLN 0.956/s       456%        26%         --        -5%        -8%       -13%       -22%       -33%       -37%       -44%       -45%       -46%       -49%       -49%
+originalFP  1.01/s       487%        34%         6%         --        -2%        -8%       -18%       -30%       -34%       -41%       -42%       -43%       -46%       -46%
+    ecceFP  1.03/s       502%        37%         8%         2%         --        -6%       -16%       -28%       -32%       -40%       -41%       -42%       -45%       -45%
+    ecceLP  1.10/s       540%        45%        15%         9%         6%         --       -10%       -23%       -28%       -36%       -37%       -38%       -41%       -41%
+originalFN  1.23/s       615%        63%        29%        22%        19%        12%         --       -14%       -20%       -28%       -30%       -31%       -34%       -34%
+   perfect  1.43/s       734%        90%        50%        42%        39%        30%        17%         --        -6%       -16%       -18%       -19%       -23%       -23%
+originalLN  1.53/s       788%       102%        60%        51%        48%        39%        24%         7%         --       -11%       -13%       -14%       -18%       -18%
+originalLP  1.71/s       895%       126%        79%        69%        65%        55%        39%        19%        12%         --        -2%        -3%        -8%        -9%
+  consPDLN  1.75/s       919%       132%        83%        74%        69%        59%        43%        22%        15%         2%         --        -1%        -6%        -6%
+  consPDFN  1.77/s       929%       134%        85%        75%        71%        61%        44%        23%        16%         3%         1%         --        -5%        -5%
+  consPDLP  1.87/s       987%       147%        96%        85%        81%        70%        52%        30%        22%         9%         7%         6%         --        -0%
+  consPDFP  1.87/s       989%       147%        96%        85%        81%        70%        52%        31%        23%         9%         7%         6%         0%         --
+
