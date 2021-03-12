@@ -126,13 +126,13 @@ let map_formula_3_vars n r f =
 let compare_formulas x y =
   (-1) * Pervasives.compare x y
 
-let fm_gt (fm1, q1, r1, _) (fm2, q2, r2, _) =
+let fm_gt (fm1, q1, r1) (fm2, q2, r2) =
   (fm1, q1, r1) > (fm2, q2, r2)
 
-let get_unification_counter (_,_,_,uc) = uc
+(* let get_unification_counter (_,_,_,uc) = uc *)
 
-let merge_results (fm, q, r, uc1) (_,_,_,uc2) =
-  (fm, q, r, uc1, uc2)
+let merge_results (fm, q, r) (_,_,_) =
+  (fm, q, r)
 
 let rec common_formulas l1 l2 =
   match l1 with
@@ -163,12 +163,21 @@ let rec common_formulas l1 l2 =
 
 let convert_results n r =
   let formulas = map_formula_3_vars n r
+  ( fun (q, r, fm) ->
+      let (q,r) = rename_vars q r in
+      (fm_to_string fm, q, r)
+  ) in
+  let sorted = List.sort compare_formulas formulas in
+  sorted
+(*
+let convert_results n r =
+  let formulas = map_formula_3_vars n r
   ( fun (uc, (q, r, fm)) ->
       let (q,r) = rename_vars q r in
       (fm_to_string fm, q, r, uc)
   ) in
   let sorted = List.sort compare_formulas formulas in
-  sorted
+  sorted *)
 
 
 
@@ -178,7 +187,7 @@ let run_formula_raw (textRepr, results) =
   let file = Printf.sprintf "unifs/%s.csv" (String.trim textRepr) in
   let oc = open_out file in
   Printf.fprintf oc "unifs;var0;var1;formula\n";
-  List.iter (fun (fm, q, r, uc) -> Printf.fprintf oc "%d;%s;%s;%s\n" uc q r fm) results;
+  List.iter (fun (fm, q, r) -> Printf.fprintf oc "%s;%s;%s\n" q r fm) results;
   close_out oc
 
 let common_to_csv name1 name2 common =
@@ -187,8 +196,8 @@ let common_to_csv name1 name2 common =
   let file = Printf.sprintf "unifs/%s.csv" @@ String.concat "_" [name1; name2] in
   Printf.printf "%s\n" file;
   let oc = open_out file in
-  Printf.fprintf oc "unifs_%s;unifs_%s;var0;var1;formula\n" name1 name2 ;
-  List.iter (fun (fm, q, r, uc1, uc2) -> Printf.fprintf oc "%d;%d;%s;%s;%s\n" uc1 uc2 q r fm) common;
+  Printf.fprintf oc "var0;var1;formula;unifs_%s;unifs_%s\n" name1 name2 ;
+  List.iter (fun (fm, q, r) -> Printf.fprintf oc "%s;%s;%s\n" q r fm) common;
   close_out oc
 
 

@@ -16,7 +16,7 @@ let _ =
     List.map (fun (name, eval) ->
       ( name
       , convert_results 500
-        @@ run_with_unification_counter qrs (fun q r fm -> eval (ocanren {[q;r]}) fm)
+        @@ run qrs (fun q r fm -> eval (ocanren {[q;r]}) fm)
       )
     ) inputs in
   compare_unification_counters converted_results
